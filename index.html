@@ -6,9 +6,10 @@
   <title>PATHFIT Attendance Portal</title>
   <style>
     :root {
-      --primary: #1e40af;
-      --primary-hover: #1d4ed8;
-      --bg: #f1f5f9;
+      --primary: #800000;         /* Maroon */
+      --primary-hover: #5c0000;   /* Dark Maroon */
+      --accent: #d4af37;          /* Gold accent */
+      --bg: #fdfbf7;
       --card: #ffffff;
       --text: #0f172a;
       --border: #cbd5e1;
@@ -27,36 +28,69 @@
       padding: 20px;
     }
 
-    .nav {
+    /* Header & Navigation */
+    .header-card {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
       background: var(--primary);
       color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
+      padding: 16px 24px;
+      border-radius: 12px;
       margin-bottom: 24px;
+      border-bottom: 4px solid var(--accent);
     }
 
-    .nav h2 { margin: 0; font-size: 18px; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
 
-    .nav-btn {
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      padding: 6px 14px;
-      border-radius: 6px;
-      cursor: pointer;
+    .school-logo {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      border-radius: 50%;
+      background: white;
+      padding: 2px;
+    }
+
+    .header-titles h2 {
+      margin: 0;
+      font-size: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .header-titles p {
+      margin: 4px 0 0 0;
+      font-size: 13px;
+      color: var(--accent);
       font-weight: 600;
     }
 
-    .nav-btn:hover { background: rgba(255, 255, 255, 0.3); }
+    .nav-btn {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 1px solid var(--accent);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
 
+    .nav-btn:hover {
+      background: var(--accent);
+      color: var(--primary);
+    }
+
+    /* Form Container */
     .card {
       background: var(--card);
       border-radius: 12px;
       padding: 24px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
       border: 1px solid var(--border);
       margin-bottom: 24px;
     }
@@ -64,36 +98,57 @@
     .view { display: none; }
     .view.active { display: block; }
 
-    .form-group { margin-bottom: 16px; }
-    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px; }
+    .form-group { margin-bottom: 18px; }
+    
+    label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-size: 14px;
+      color: var(--primary);
+    }
+
+    /* Input Fields Force Capital Letters visually */
     input, select, button {
       width: 100%;
-      padding: 10px 12px;
+      padding: 12px;
       border-radius: 6px;
       border: 1px solid var(--border);
       font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    input:focus, select:focus {
+      outline: 2px solid var(--primary);
+      border-color: transparent;
     }
 
     button.btn-submit {
       background-color: var(--primary);
       color: white;
-      border: none;
-      font-weight: 600;
+      border: 2px solid var(--accent);
+      font-weight: 700;
       cursor: pointer;
-      margin-top: 8px;
+      margin-top: 10px;
+      padding: 14px;
+      font-size: 15px;
+      letter-spacing: 0.5px;
     }
 
-    button.btn-submit:hover { background-color: var(--primary-hover); }
+    button.btn-submit:hover {
+      background-color: var(--primary-hover);
+    }
 
     .status-msg {
-      margin-top: 12px;
-      padding: 10px;
+      margin-top: 16px;
+      padding: 12px;
       border-radius: 6px;
       background-color: #dcfce7;
       color: var(--success);
-      font-weight: 600;
+      font-weight: 700;
       display: none;
       text-align: center;
+      border: 1px solid #bbf7d0;
     }
 
     .filters {
@@ -110,8 +165,8 @@
       margin-bottom: 16px;
     }
 
-    .btn-export { background: #16a34a; color: white; border: none; padding: 8px 14px; cursor: pointer; border-radius: 6px; }
-    .btn-clear { background: var(--danger); color: white; border: none; padding: 8px 14px; cursor: pointer; border-radius: 6px; }
+    .btn-export { background: #16a34a; color: white; border: none; padding: 10px 16px; cursor: pointer; border-radius: 6px; font-weight: 600; }
+    .btn-clear { background: var(--danger); color: white; border: none; padding: 10px 16px; cursor: pointer; border-radius: 6px; font-weight: 600; }
 
     .table-container { overflow-x: auto; }
     table {
@@ -126,43 +181,71 @@
       border-bottom: 1px solid var(--border);
     }
 
-    th { background-color: #f8fafc; font-weight: 600; }
+    th {
+      background-color: #f8fafc;
+      font-weight: 700;
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+    }
   </style>
 </head>
 <body>
 
-  <div class="nav">
-    <h2>PATHFIT Class Attendance</h2>
-    <button id="toggleViewBtn" class="nav-btn" onclick="toggleView()">Switch to Admin View</button>
+  <!-- Navigation Bar with School Logo -->
+  <div class="header-card">
+    <div class="brand">
+      <img src="https://i.ibb.co/6P0LgC5/school-logo.png" alt="School Logo" class="school-logo" />
+      <div class="header-titles">
+        <h2>COLEGIO DE SAN GABRIEL ARCANGEL</h2>
+        <p>PATHFIT CLASS ATTENDANCE PORTAL</p>
+      </div>
+    </div>
+    <button id="toggleViewBtn" class="nav-btn" onclick="toggleView()">ADMIN VIEW</button>
   </div>
 
   <!-- STUDENT VIEW -->
   <div id="studentView" class="card view active">
-    <h3>Student Attendance Form</h3>
+    <h3 style="color: var(--primary); margin-top: 0;">STUDENT ATTENDANCE FORM</h3>
+    <p style="font-size: 13px; color: #64748b; margin-bottom: 20px;">* ALL FIELDS ARE REQUIRED AND MUST BE FILLED OUT IN ALL CAPS.</p>
+    
     <form id="attendanceForm">
       <div class="form-group">
-        <label for="subject">Course Subject</label>
+        <label for="subject">COURSE SUBJECT *</label>
         <select id="subject" required>
-          <option value="">-- Select Subject --</option>
+          <option value="">-- SELECT SUBJECT --</option>
           <option value="PATHFIT 1">PATHFIT 1</option>
           <option value="PATHFIT 3">PATHFIT 3</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label for="studentName">Full Name (Last Name, First Name)</label>
-        <input type="text" id="studentName" placeholder="e.g., Dela Cruz, Juan" required />
+        <label for="studentName">FULL NAME (LAST NAME, FIRST NAME) *</label>
+        <input 
+          type="text" 
+          id="studentName" 
+          placeholder="E.G., DELA CRUZ, JUAN" 
+          required 
+          oninput="this.value = this.value.toUpperCase()" 
+        />
       </div>
 
       <div class="form-group">
-        <label for="studentId">Student ID Number</label>
-        <input type="text" id="studentId" placeholder="e.g., 2026-01234" required />
+        <label for="studentId">STUDENT ID NUMBER (NUMBERS ONLY) *</label>
+        <input 
+          type="text" 
+          id="studentId" 
+          placeholder="E.G., 20260123" 
+          required 
+          pattern="[0-9]+" 
+          inputmode="numeric" 
+          oninput="this.value = this.value.replace(/[^0-9]/g, '')" 
+        />
       </div>
 
       <div class="form-group">
-        <label for="section">Section</label>
+        <label for="section">SECTION *</label>
         <select id="section" required>
-          <option value="">-- Select Section --</option>
+          <option value="">-- SELECT SECTION --</option>
           <option value="BSIT 2-5">BSIT 2-5</option>
           <option value="BSIT 1-4">BSIT 1-4</option>
           <option value="TM 2-3">TM 2-3</option>
@@ -174,28 +257,28 @@
         </select>
       </div>
 
-      <button type="submit" class="btn-submit">Submit Attendance</button>
+      <button type="submit" class="btn-submit">SUBMIT ATTENDANCE</button>
     </form>
-    <div id="statusMsg" class="status-msg">✓ Attendance submitted successfully!</div>
+    <div id="statusMsg" class="status-msg">✓ ATTENDANCE SUBMITTED SUCCESSFULLY!</div>
   </div>
 
   <!-- ADMIN VIEW -->
   <div id="adminView" class="card view">
-    <h3>Instructor Dashboard</h3>
+    <h3 style="color: var(--primary); margin-top: 0;">INSTRUCTOR DASHBOARD</h3>
     
     <div class="filters">
       <div>
-        <label for="filterSubject">Filter Subject</label>
+        <label for="filterSubject">FILTER SUBJECT</label>
         <select id="filterSubject" onchange="renderTable()">
-          <option value="ALL">All Subjects</option>
+          <option value="ALL">ALL SUBJECTS</option>
           <option value="PATHFIT 1">PATHFIT 1</option>
           <option value="PATHFIT 3">PATHFIT 3</option>
         </select>
       </div>
       <div>
-        <label for="filterSection">Filter Section</label>
+        <label for="filterSection">FILTER SECTION</label>
         <select id="filterSection" onchange="renderTable()">
-          <option value="ALL">All Sections</option>
+          <option value="ALL">ALL SECTIONS</option>
           <option value="BSIT 2-5">BSIT 2-5</option>
           <option value="BSIT 1-4">BSIT 1-4</option>
           <option value="TM 2-3">TM 2-3</option>
@@ -207,25 +290,25 @@
         </select>
       </div>
       <div>
-        <label for="searchQuery">Search Student</label>
-        <input type="text" id="searchQuery" placeholder="Name or ID..." oninput="renderTable()" />
+        <label for="searchQuery">SEARCH STUDENT</label>
+        <input type="text" id="searchQuery" placeholder="NAME OR ID..." oninput="this.value = this.value.toUpperCase(); renderTable();" />
       </div>
     </div>
 
     <div class="action-bar">
-      <button class="btn-export" onclick="exportToCSV()">Export to CSV/Excel</button>
-      <button class="btn-clear" onclick="clearRecords()">Clear All Logs</button>
+      <button class="btn-export" onclick="exportToCSV()">EXPORT TO CSV/EXCEL</button>
+      <button class="btn-clear" onclick="clearRecords()">CLEAR ALL LOGS</button>
     </div>
 
     <div class="table-container">
       <table>
         <thead>
           <tr>
-            <th>Date & Time</th>
-            <th>Subject</th>
-            <th>Section</th>
-            <th>Student Name</th>
-            <th>ID Number</th>
+            <th>DATE & TIME</th>
+            <th>SUBJECT</th>
+            <th>SECTION</th>
+            <th>STUDENT NAME</th>
+            <th>ID NUMBER</th>
           </tr>
         </thead>
         <tbody id="attendanceTable"></tbody>
@@ -234,8 +317,8 @@
   </div>
 
   <script>
-    // PASTE YOUR GOOGLE SCRIPT LINK BETWEEN THE QUOTES BELOW:
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxFpe87ny-biK-h-qyiLHOtFrYWOb0VkS2cl2bFLgrnv4wwnuU-nV_JOG2Tg_X87H9/exec";
+    // PASTE YOUR GOOGLE SCRIPT URL HERE:
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwxFpe87ny-biK-h-qyiLHOtFrYWOb0VkS2cl2bFLgrnv4wwnuU-nV_JOG2Tg_X87H9/exec;
 
     const ADMIN_PASSCODE = "admin123";
     let currentView = "student";
@@ -247,36 +330,53 @@
 
     function toggleView() {
       if (currentView === "student") {
-        const password = prompt("Enter Admin Passcode:");
+        const password = prompt("ENTER ADMIN PASSCODE:");
         if (password === ADMIN_PASSCODE) {
           currentView = "admin";
           document.getElementById('studentView').classList.remove('active');
           document.getElementById('adminView').classList.add('active');
-          toggleViewBtn.textContent = "Switch to Student Form";
+          toggleViewBtn.textContent = "SWITCH TO STUDENT FORM";
           renderTable();
         } else if (password !== null) {
-          alert("Incorrect passcode!");
+          alert("INCORRECT PASSCODE!");
         }
       } else {
         currentView = "student";
         document.getElementById('adminView').classList.remove('active');
         document.getElementById('studentView').classList.add('active');
-        toggleViewBtn.textContent = "Switch to Student View";
+        toggleViewBtn.textContent = "ADMIN VIEW";
       }
     }
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
 
+      const subject = document.getElementById('subject').value.trim();
+      const name = document.getElementById('studentName').value.trim().toUpperCase();
+      const id = document.getElementById('studentId').value.trim();
+      const section = document.getElementById('section').value.trim();
+
+      // Strict Validation: Ensure no boxes are left blank
+      if (!subject || !name || !id || !section) {
+        alert("PLEASE FILL OUT ALL BOXES BEFORE SUBMITTING.");
+        return;
+      }
+
+      // Ensure Student ID contains numbers only
+      if (!/^\d+$/.test(id)) {
+        alert("STUDENT ID MUST CONTAIN NUMBERS ONLY.");
+        return;
+      }
+
       const submitBtn = form.querySelector('button[type="submit"]');
       submitBtn.disabled = true;
-      submitBtn.textContent = "Submitting...";
+      submitBtn.textContent = "SUBMITTING...";
 
       const payload = {
-        subject: document.getElementById('subject').value,
-        name: document.getElementById('studentName').value,
-        id: document.getElementById('studentId').value,
-        section: document.getElementById('section').value
+        subject: subject,
+        name: name,
+        id: id,
+        section: section
       };
 
       const newRecord = {
@@ -297,15 +397,15 @@
       .then(() => {
         form.reset();
         submitBtn.disabled = false;
-        submitBtn.textContent = "Submit Attendance";
+        submitBtn.textContent = "SUBMIT ATTENDANCE";
         statusMsg.style.display = 'block';
         setTimeout(() => statusMsg.style.display = 'none', 3000);
       })
       .catch(error => {
         console.error('Error submitting attendance:', error);
-        alert('Saved locally, but failed to sync to Google Sheets.');
+        alert('SAVED LOCALLY, BUT FAILED TO SYNC TO GOOGLE SHEETS.');
         submitBtn.disabled = false;
-        submitBtn.textContent = "Submit Attendance";
+        submitBtn.textContent = "SUBMIT ATTENDANCE";
       });
     });
 
@@ -313,19 +413,19 @@
       const records = JSON.parse(localStorage.getItem('pathfitAttendance') || '[]');
       const subjectFilter = document.getElementById('filterSubject').value;
       const sectionFilter = document.getElementById('filterSection').value;
-      const query = document.getElementById('searchQuery').value.toLowerCase();
+      const query = document.getElementById('searchQuery').value.toUpperCase();
 
       tableBody.innerHTML = '';
 
       const filtered = records.filter(r => {
         const matchesSubject = (subjectFilter === 'ALL' || r.subject === subjectFilter);
         const matchesSection = (sectionFilter === 'ALL' || r.section === sectionFilter);
-        const matchesQuery = r.name.toLowerCase().includes(query) || r.id.toLowerCase().includes(query);
+        const matchesQuery = r.name.toUpperCase().includes(query) || r.id.includes(query);
         return matchesSubject && matchesSection && matchesQuery;
       });
 
       if (filtered.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b;">No attendance records found.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#64748b;">NO ATTENDANCE RECORDS FOUND.</td></tr>`;
         return;
       }
 
@@ -345,11 +445,11 @@
     function exportToCSV() {
       const records = JSON.parse(localStorage.getItem('pathfitAttendance') || '[]');
       if (records.length === 0) {
-        alert("No records to export!");
+        alert("NO RECORDS TO EXPORT!");
         return;
       }
 
-      let csvContent = "data:text/csv;charset=utf-8,Date,Time,Subject,Section,Name,Student ID\n";
+      let csvContent = "data:text/csv;charset=utf-8,DATE,TIME,SUBJECT,SECTION,NAME,STUDENT ID\n";
       records.forEach(r => {
         csvContent += `"${r.date}","${r.time}","${r.subject}","${r.section}","${r.name}","${r.id}"\n`;
       });
@@ -364,7 +464,7 @@
     }
 
     function clearRecords() {
-      if (confirm("Are you sure you want to delete all attendance records? This action cannot be undone.")) {
+      if (confirm("ARE YOU SURE YOU WANT TO DELETE ALL ATTENDANCE RECORDS? THIS ACTION CANNOT BE UNDONE.")) {
         localStorage.removeItem('pathfitAttendance');
         renderTable();
       }
